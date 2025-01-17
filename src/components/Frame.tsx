@@ -17,19 +17,77 @@ import { createStore } from "mipd";
 import { Label } from "~/components/ui/label";
 import { PROJECT_TITLE } from "~/lib/constants";
 
-function ExampleCard() {
+function QuizGame() {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showResult, setShowResult] = useState(false);
+
+  const questions = [
+    {
+      question: "What is the prize pool mentioned in the posts?",
+      options: ["7k", "70k", "700k", "7m"],
+      answer: 1 // 70k
+    },
+    {
+      question: "What sport is mentioned in the bracket game?",
+      options: ["Soccer", "Basketball", "Baseball", "Football"],
+      answer: 3 // Football
+    }
+  ];
+
+  const handleAnswer = (selectedIndex: number) => {
+    if (selectedIndex === questions[currentQuestion].answer) {
+      setScore(prev => prev + 1);
+    }
+
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(prev => prev + 1);
+    } else {
+      setShowResult(true);
+    }
+  };
+
+  if (showResult) {
+    return (
+      <Card className="border-neutral-200 bg-white">
+        <CardHeader>
+          <CardTitle className="text-neutral-900">Quiz Results</CardTitle>
+        </CardHeader>
+        <CardContent className="text-neutral-800">
+          <p>You scored {score} out of {questions.length}!</p>
+          <PurpleButton onClick={() => {
+            setCurrentQuestion(0);
+            setScore(0);
+            setShowResult(false);
+          }}>
+            Play Again
+          </PurpleButton>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="border-neutral-200 bg-white">
       <CardHeader>
-        <CardTitle className="text-neutral-900">Welcome to the Frame Template</CardTitle>
+        <CardTitle className="text-neutral-900">CastQuest</CardTitle>
         <CardDescription className="text-neutral-600">
-          This is an example card that you can customize or remove
+          Question {currentQuestion + 1} of {questions.length}
         </CardDescription>
       </CardHeader>
       <CardContent className="text-neutral-800">
-        <p>
-          Your frame content goes here. The text is intentionally dark to ensure good readability.
-        </p>
+        <h3 className="font-semibold mb-4">{questions[currentQuestion].question}</h3>
+        <div className="space-y-2">
+          {questions[currentQuestion].options.map((option, index) => (
+            <PurpleButton 
+              key={index}
+              onClick={() => handleAnswer(index)}
+              className="w-full justify-start"
+            >
+              {option}
+            </PurpleButton>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );
@@ -137,7 +195,7 @@ export default function Frame(
     >
       <div className="w-[300px] mx-auto py-2 px-2">
         <h1 className="text-2xl font-bold text-center mb-4 text-neutral-900">{title}</h1>
-        <ExampleCard />
+        <QuizGame />
       </div>
     </div>
   );
